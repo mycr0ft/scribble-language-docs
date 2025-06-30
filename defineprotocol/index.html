@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Defining a Protocol - scribble-language-docs</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../css/brands.min.css" rel="stylesheet">
+        <link href="../css/solid.min.css" rel="stylesheet">
+        <link href="../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">scribble-language-docs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href=".." class="nav-link">Scribble Language Guide</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../advanced/" class="nav-link">Advanced Constructs</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="./" class="nav-link active" aria-current="page">Defining a Protocol</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../advanced/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" class="nav-link disabled">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#defining-a-protocol" class="nav-link">Defining a Protocol</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#a-basic-protocol" class="nav-link">A Basic Protocol</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#adding-decision-points" class="nav-link">Adding Decision Points</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#concurrency" class="nav-link">Concurrency</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#recursion" class="nav-link">Recursion</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="defining-a-protocol">Defining a Protocol</h1>
+<h2 id="a-basic-protocol">A Basic Protocol</h2>
+<p>The following example shows the basic structure of a Scribble protocol:</p>
+<pre><code>    module scribble.example.Basic;
+
+    type &lt;xsd&gt; &quot;{http://scribble.org/examples}Greetings&quot; from &quot;HelloWorld.xsd&quot; as Greetings;
+
+    global protocol HelloWorld (role Me, role World) {
+            hello(Greetings) from Me to World;
+            hello(Greetings) from World to Me;
+    }
+</code></pre>
+<p>The first line always defines the <code>module</code>, which is a <em>.</em> separated
+name representing the location of the Scribble protocol file within a
+hierarchy.</p>
+<p>The last part of the module name, <code>Basic</code> in this case, represents the
+filename with a <em>.scr</em> extension. The preceding parts represent a
+folder/directory hierarchy. So the protocol above would be contained in
+a file <em>scribble/example/Basic.scr</em>.</p>
+<p>Need to describe root folder, or search path.</p>
+<p>The purpose of a protocol is to exchange typed messages between
+participants. The third line shows an example of how the protocol
+declares these types.</p>
+<p>The part between &lt; &gt; identifies the nature of the type, in this
+case it is an XSD (XML Schema Definition). The next part, which is in
+double quotes, identifies the type in a format appropriate for the
+schema. The <code>from</code> value (also in double quotes) represents the location
+of the schema definition. Finally the <code>as</code> value is an alias which the
+protocol will use to reference this type.</p>
+<p>The final part of this simple protocol is the <code>global protocol</code>
+definition. The name of this global protocol is <code>HelloWorld</code> and it is
+associated with two roles, <code>Me</code> and <code>World</code>. This means that the
+protocol will describe the interactions that occur between these roles
+from a global (or endpoint neutral) perspective. Later in this guide we
+will discuss the topic of projection and the local protocols that
+describe the behaviour for each of the roles involved in the global
+protocol.</p>
+<p>In the body of the global protocol there is two message transfer (or
+interaction) statements. This statements identify the message signature
+(operation name followed by the types(s) within the braces), and the
+<code>from</code> and <code>to</code> roles. So in this example the role <code>Me</code> is saying
+<em>hello</em> to <code>World</code>, and then <code>World</code> responds by saying <em>hello</em> back.</p>
+<p>The role names used in the <code>from</code> and <code>to</code> clauses must have previously
+been defined in the protocol header.</p>
+<p>Although described as two separate statements, this simple pattern can
+be used to represent a request/response interaction between the two
+parties (roles). If this is the intention, then when defining the
+protocol it is recommended that the operation name be the same on both
+statements.</p>
+<h2 id="adding-decision-points">Adding Decision Points</h2>
+<p>The previous section introduced a simple protocol which involved a
+sequence of two interactions (or message transfers). Most protocols
+involve some decision points which result in the protocol having a
+different behaviour.</p>
+<p>The following example illustrates how a decision point can be defined.
+We’ll change the protocol to represent a more interesting purchasing
+example:</p>
+<pre><code>    module scribble.example.Purchasing;
+
+    type &lt;xsd&gt; &quot;{http://scribble.org/examples}QuoteRequest&quot; from &quot;Purchasing.xsd&quot; as QuoteRequest;
+    type &lt;xsd&gt; &quot;{http://scribble.org/examples}Quote&quot; from &quot;Purchasing.xsd&quot; as Quote;
+    type &lt;xsd&gt; &quot;{http://scribble.org/examples}Order&quot; from &quot;Purchasing.xsd&quot; as Order;
+    type &lt;xsd&gt; &quot;{http://scribble.org/examples}OrderAck&quot; from &quot;Purchasing.xsd&quot; as OrderAck;
+    type &lt;xsd&gt; &quot;{http://scribble.org/examples}OutOfStock&quot; from &quot;Purchasing.xsd&quot; as OutOfStock;
+
+    global protocol BuyGoods (role Buyer, role Seller) {
+            quote(QuoteRequest) from Buyer to Seller;
+
+            choice at Seller {
+                    quote(Quote) from Seller to Buyer;
+                    buy(Order) from Buyer to Seller;
+                    buy(OrderAck) from Seller to Buyer;
+            } or {
+                    quote(OutOfStock) from Seller to Buyer;
+            }
+    }
+</code></pre>
+<p>As in the original example, we have a module definition followed by the
+type declarations. In this example we have five types defined.</p>
+<p>The <code>global protocol</code> is similar to the first example, however instead
+of simply returning a single response, this example introduces the
+<code>choice</code> construct.</p>
+<p>A <code>choice</code> represents a decision point within the protocol. Decisions
+must always be made at a nominated role, with that decision then being
+communicated to the other roles based on the behaviour defined in the
+selected path.</p>
+<p>This means that each path within the choice <em>must</em> begin within a
+message transfer initiated by the role that made the decision.
+Therefore, the following choice statement would be invalid:</p>
+<pre><code>        choice at Seller {
+                quote(Quote) from Seller to Buyer;
+        } or {
+                // Invalid, as initial interaction must come from role 'Seller'
+                cancel(CancelRequest) from Buyer to Seller;
+        }
+</code></pre>
+<p>To ensure that the other (non-decision making) roles correctly infer
+which path should be taken, the message types of the initial message
+transfers from the decision making role must be distinct. So, the
+following example would be invalid:</p>
+<pre><code>        choice at Seller {
+                quote(Quote) from Seller to Buyer;
+                buy(Order) from Buyer to Seller;
+                buy(OrderAck) from Seller to Buyer;
+        } or {
+                // Invalid, as type 'Quote' was used in the other choice path
+                quote(Quote) from Seller to Buyer;
+                reject(Order) from Buyer to Seller;
+        }
+</code></pre>
+<p>Protocols where the decision is conveyed within the message contents is
+not currently handled by this version of Scribble.</p>
+<h2 id="concurrency">Concurrency</h2>
+<p>This section will discuss how protocols can be defined where behaviour
+can be performed concurrently (i.e. in parallel). We will extend the
+previous example by adding some new roles, and a parallel construct to
+check concurrently whether the buyer’s credit is acceptible and if there
+is enough stock to satisfy the quote.</p>
+<pre><code>module scribble.example.Purchasing;
+
+type &lt;xsd&gt; "{http://scribble.org/examples}QuoteRequest" from "Purchasing.xsd" as QuoteRequest;
+type &lt;xsd&gt; "{http://scribble.org/examples}Quote" from "Purchasing.xsd" as Quote;
+type &lt;xsd&gt; "{http://scribble.org/examples}CreditReport" from "Purchasing.xsd" as CreditReport;
+type &lt;xsd&gt; "{http://scribble.org/examples}StockAvailability" from "Purchasing.xsd" as StockAvailability;
+type &lt;xsd&gt; "{http://scribble.org/examples}Order" from "Purchasing.xsd" as Order;
+type &lt;xsd&gt; "{http://scribble.org/examples}OrderAck" from "Purchasing.xsd" as OrderAck;
+type &lt;xsd&gt; "{http://scribble.org/examples}InsufficientCredit" from "Purchasing.xsd" as InsufficientCredit;
+type &lt;xsd&gt; "{http://scribble.org/examples}OutOfStock" from "Purchasing.xsd" as OutOfStock;
+
+global protocol BuyGoods (role Buyer, role Seller, role CreditAgency, role Store) {
+        quote(QuoteRequest) from Buyer to Seller;
+
+        par {
+                creditCheck(Quote) from Seller to CreditAgency;
+                creditCheck(CreditReport) from CreditAgency to Seller;
+        } and {
+                stockCheck(Quote) from Seller to Store;
+                stockCheck(StockAvailability) from Store to Seller;
+        }
+
+        choice at Seller {
+                quote(Quote) from Seller to Buyer;
+                buy(Order) from Buyer to Seller;
+                buy(OrderAck) from Seller to Buyer;
+        } or {
+                quote(InsufficientCredit) from Seller to Buyer;
+        } or {
+                quote(OutOfStock) from Seller to Buyer;
+        }
+}
+</code></pre>
+<p>Each of the paths defined within the par construct are expected to occur
+concurrently. The protocol will not progress past the par construct
+until each of the paths within the par have completed.</p>
+<p>To avoid potential conflicts between message exchanges in the concurrent
+paths, it is currently necessary to use distinct operator names between
+role pairs in different paths. So (for example), in the above example,
+the second path could not use <em>creditCheck</em> as an operator.</p>
+<h2 id="recursion">Recursion</h2>
+<p>The recursion construct can be used to define protocols involving
+repetition.</p>
+<pre><code>module scribble.example.Purchasing;
+
+type &lt;xsd&gt; "{http://scribble.org/examples}QuoteRequest" from "Purchasing.xsd" as QuoteRequest;
+type &lt;xsd&gt; "{http://scribble.org/examples}Quote" from "Purchasing.xsd" as Quote;
+type &lt;xsd&gt; "{http://scribble.org/examples}Order" from "Purchasing.xsd" as Order;
+type &lt;xsd&gt; "{http://scribble.org/examples}OrderAck" from "Purchasing.xsd" as OrderAck;
+type &lt;xsd&gt; "{http://scribble.org/examples}OutOfStock" from "Purchasing.xsd" as OutOfStock;
+
+global protocol BuyGoods (role Buyer, role Seller) {
+
+        quote(QuoteRequest) from Buyer to Seller;
+
+        rec SubmitQuote {
+                choice at Seller {
+                        quote(Quote) from Seller to Buyer;
+                        buy(Order) from Buyer to Seller;
+                        buy(OrderAck) from Seller to Buyer;
+                } or {
+                        quote(OutOfStock) from Seller to Buyer;
+                }
+
+                choice at Buyer {
+                        quote(QuoteRequest) from Buyer to Seller;
+
+                        continue SubmitQuote;
+                } or {
+                        quit() from Buyer to Seller;
+                }
+        }
+}
+</code></pre>
+<p>The <code>rec</code> block defines the scope of the recursion, with a label to
+identify the block (i.e. SubmitQuote in this example).</p>
+<p>The <code>continue</code> statement defines where the recursion should actually
+occur. In this example, after the initial quote request has been
+handled, the <code>Buyer</code> then has the option to either submit a further
+quote, or quit the session. If they submit another quote request, then
+it will continue back to the start of the recursion block where it will
+await the response from the <code>Seller</code>.</p>
+<p>The recursion block will only complete when the <code>Buyer</code> sends a <code>quit</code>
+message to the <code>Seller</code>.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js"></script>
+        <script src="../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
